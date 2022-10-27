@@ -62,6 +62,8 @@ public class Device {
 			driver.close();
 		} catch (SQLException e) {
 			LOG.warning("Ha ocurrido un error:\t"+e.getMessage()+"\t"+e.getCause());
+		} catch (Exception e) {
+			LOG.warning("Ha ocurrido un error montando la conexión con la base de datos:\t"+e.getMessage()+"\t"+e.getCause());
 		}
 		return device;
 	}
@@ -92,12 +94,16 @@ public class Device {
 			driver.close();
 		} catch (SQLException e) {
 			LOG.warning("Ha ocurrido un error:\t"+e.getMessage()+"\t"+e.getCause());
+		} catch (Exception e) {
+			LOG.warning("Ha ocurrido un error montando la conexión con la base de datos:\t"+e.getMessage()+"\t"+e.getCause());
 		}
 		return device;
 	}
 	
 	public static void inventoryAll(ArrayList<Device> devices) {
+		LOG.info("Se han descubierto "+devices.size()+" dispositivos");
 		for(Device device : devices) {
+			LOG.info(device.toString());
 			device.inventory();
 		}
 	}
@@ -111,21 +117,27 @@ public class Device {
 			this.updatedAt = new Timestamp(System.currentTimeMillis());
 			
 			while(result.next()) {
+				LOG.info("El equipo ya existe en base de datos ("+result.getString(4)+")");
 				inventoried = true;
 				if(result.getBoolean(6))
 					this.remove();
 				else if(!this.ipAddress.equals(result.getString(3))) {
+					LOG.info("Se ha modificado la direccion IP");
 					this.label = result.getString(4);
 					this.trust = result.getBoolean(5);
 					this.remove = result.getBoolean(6);
 					this.update();
 				}
-			} if(!inventoried)
-				this.insert();
+			} if(!inventoried) {
+				LOG.info("El equipo no existe en base de datos");
+				this.insert();				
+			}
 			
 			driver.close();
 		} catch (SQLException e) {
 			LOG.warning("Ha ocurrido un error:\t"+e.getMessage()+"\t"+e.getCause());
+		} catch (Exception e) {
+			LOG.warning("Ha ocurrido un error montando la conexión con la base de datos:\t"+e.getMessage()+"\t"+e.getCause());
 		}
 		
 	}
@@ -148,6 +160,8 @@ public class Device {
 			driver.close();
 		} catch (SQLException e) {
 			LOG.warning("Ha ocurrido un error:\t"+e.getMessage()+"\t"+e.getCause());
+		} catch (Exception e) {
+			LOG.warning("Ha ocurrido un error montando la conexión con la base de datos:\t"+e.getMessage()+"\t"+e.getCause());
 		}
 	}
 	
@@ -165,6 +179,8 @@ public class Device {
 			driver.close();
 		} catch (SQLException e) {
 			LOG.warning("Ha ocurrido un error:\t"+e.getMessage()+"\t"+e.getCause());
+		} catch (Exception e) {
+			LOG.warning("Ha ocurrido un error montando la conexión con la base de datos:\t"+e.getMessage()+"\t"+e.getCause());
 		}
 	}
 	
@@ -222,5 +238,10 @@ public class Device {
 	
 	public int getId() {
 		return id;
+	}
+	
+	@Override
+	public String toString() {
+		return "("+this.label+") MAC: "+this.getPhysicalAddress()+", IP: "+this.ipAddress;
 	}
 }

@@ -6,16 +6,29 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class Driver {
+import netmanagement.Main;
+
+public class Driver extends Main {
 	private Connection connection;
 	
 	/**
-	 * Esta clase permite hacer uso del objeto {@link Connection} connection con el que ejecutar consultas a BBDD
+	 * Esta clase permite hacer uso del objeto {@link Connection} connection con el que ejecutar consultas a base de datos
 	 * @throws SQLException
 	 */
-	public Driver() throws SQLException {
-		this.connection =
-				DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/netmanagement","joelm","admin1234");
+	public Driver() throws SQLException, Exception {
+		String
+			DBUrl = properties.getProperty("DB_URL"),
+			DBPort = properties.getProperty("DB_PORT"),
+			DBName = properties.getProperty("DB_NAME"),
+			DBUsr = properties.getProperty("DB_USR"),
+			DBPwd = properties.getProperty("DB_PWD");
+		
+		if(DBUrl == null || DBUrl.isEmpty()) { throw new Exception("La URL de conexion a la base de datos es nula o esta vacia"); }
+		else if(DBPort == null || DBPort.isEmpty()) { throw new Exception("El puerto de conexion a la base de datos es nulo o esta vacio"); }
+		else if(DBName == null || DBName.isEmpty()) { throw new Exception("El nombre de la base de datos es nulo o esta vacio"); }
+		else if(DBUsr == null || DBUsr.isEmpty()) { throw new Exception("El usuaio de conexion a la base de datos es nulo o esta vacio"); }
+		else if(DBPwd == null || DBPwd.isEmpty()) { throw new Exception("La contraseña de conexion a la base de datos es nula o esta vacia"); }
+		else this.connection = DriverManager.getConnection("jdbc:mysql://"+DBUrl+":"+DBPort+"/"+DBName,DBUsr,DBPwd);
 	}
 	
 	/**
