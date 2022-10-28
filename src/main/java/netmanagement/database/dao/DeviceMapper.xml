@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="netmanagement.database.dao.DeviceMapper">
+  <resultMap id="BaseResultMap" type="netmanagement.database.vo.Device">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="physicalAddress" jdbcType="VARCHAR" property="physicaladdress" />
+    <result column="ipAddress" jdbcType="VARCHAR" property="ipaddress" />
+    <result column="label" jdbcType="VARCHAR" property="label" />
+    <result column="trust" jdbcType="BIT" property="trust" />
+    <result column="remove" jdbcType="BIT" property="remove" />
+    <result column="updatedAt" jdbcType="TIMESTAMP" property="updatedat" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, physicalAddress, ipAddress, label, trust, remove, updatedAt
+  </sql>
+  <select id="selectByExample" parameterType="netmanagement.database.vo.DeviceExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from netmessaging..device
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from netmessaging..device
+    where id = #{id,jdbcType=INTEGER}
+      and physicalAddress = #{physicaladdress,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="map">
+    delete from netmessaging..device
+    where id = #{id,jdbcType=INTEGER}
+      and physicalAddress = #{physicaladdress,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="netmanagement.database.vo.DeviceExample">
+    delete from netmessaging..device
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="netmanagement.database.vo.Device">
+    insert into netmessaging..device (id, physicalAddress, ipAddress, 
+      label, trust, remove, updatedAt
+      )
+    values (#{id,jdbcType=INTEGER}, #{physicaladdress,jdbcType=VARCHAR}, #{ipaddress,jdbcType=VARCHAR}, 
+      #{label,jdbcType=VARCHAR}, #{trust,jdbcType=BIT}, #{remove,jdbcType=BIT}, #{updatedat,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="netmanagement.database.vo.Device">
+    insert into netmessaging..device
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="physicaladdress != null">
+        physicalAddress,
+      </if>
+      <if test="ipaddress != null">
+        ipAddress,
+      </if>
+      <if test="label != null">
+        label,
+      </if>
+      <if test="trust != null">
+        trust,
+      </if>
+      <if test="remove != null">
+        remove,
+      </if>
+      <if test="updatedat != null">
+        updatedAt,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="physicaladdress != null">
+        #{physicaladdress,jdbcType=VARCHAR},
+      </if>
+      <if test="ipaddress != null">
+        #{ipaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null">
+        #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="trust != null">
+        #{trust,jdbcType=BIT},
+      </if>
+      <if test="remove != null">
+        #{remove,jdbcType=BIT},
+      </if>
+      <if test="updatedat != null">
+        #{updatedat,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="netmanagement.database.vo.DeviceExample" resultType="java.lang.Long">
+    select count(*) from netmessaging..device
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update netmessaging..device
+    <set>
+      <if test="row.id != null">
+        id = #{row.id,jdbcType=INTEGER},
+      </if>
+      <if test="row.physicaladdress != null">
+        physicalAddress = #{row.physicaladdress,jdbcType=VARCHAR},
+      </if>
+      <if test="row.ipaddress != null">
+        ipAddress = #{row.ipaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="row.label != null">
+        label = #{row.label,jdbcType=VARCHAR},
+      </if>
+      <if test="row.trust != null">
+        trust = #{row.trust,jdbcType=BIT},
+      </if>
+      <if test="row.remove != null">
+        remove = #{row.remove,jdbcType=BIT},
+      </if>
+      <if test="row.updatedat != null">
+        updatedAt = #{row.updatedat,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="example != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update netmessaging..device
+    set id = #{row.id,jdbcType=INTEGER},
+      physicalAddress = #{row.physicaladdress,jdbcType=VARCHAR},
+      ipAddress = #{row.ipaddress,jdbcType=VARCHAR},
+      label = #{row.label,jdbcType=VARCHAR},
+      trust = #{row.trust,jdbcType=BIT},
+      remove = #{row.remove,jdbcType=BIT},
+      updatedAt = #{row.updatedat,jdbcType=TIMESTAMP}
+    <if test="example != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="netmanagement.database.vo.Device">
+    update netmessaging..device
+    <set>
+      <if test="ipaddress != null">
+        ipAddress = #{ipaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="label != null">
+        label = #{label,jdbcType=VARCHAR},
+      </if>
+      <if test="trust != null">
+        trust = #{trust,jdbcType=BIT},
+      </if>
+      <if test="remove != null">
+        remove = #{remove,jdbcType=BIT},
+      </if>
+      <if test="updatedat != null">
+        updatedAt = #{updatedat,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+      and physicalAddress = #{physicaladdress,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="netmanagement.database.vo.Device">
+    update netmessaging..device
+    set ipAddress = #{ipaddress,jdbcType=VARCHAR},
+      label = #{label,jdbcType=VARCHAR},
+      trust = #{trust,jdbcType=BIT},
+      remove = #{remove,jdbcType=BIT},
+      updatedAt = #{updatedat,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+      and physicalAddress = #{physicaladdress,jdbcType=VARCHAR}
+  </update>
+</mapper>

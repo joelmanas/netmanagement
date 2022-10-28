@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<properties>
+		<property name="platformSchema" value="[your_schema]."></property>
+		<property name="logSchemaName" value="[your_schema]."></property>
+	</properties>
+
+	<environments default="default_environment_name">
+      <environment id = "environment_id">
+         <transactionManager type = "JDBC"/>
+            <dataSource type = "POOLED">
+               <property name = "driver" value = "com.mysql.jdbc.Driver"/>
+               <property name = "url" value = "jdbc:mysql://[db_url]:[db_port]/[your_schema]"/>
+               <property name = "username" value = "[db_usr]"/>
+               <property name = "password" value = "[db_pwd]"/>
+            </dataSource>
+      </environment>
+   </environments>
+</configuration>

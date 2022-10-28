@@ -1,4 +1,4 @@
-package netmanagement.entity;
+package netmanagement.utils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -6,12 +6,12 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-public class Command {
-	private static Logger LOG = Logger.getLogger(Command.class.getName());
+public class UtilCommand {
+	private static Logger LOG = Logger.getLogger(UtilCommand.class.getName());
 	
 	private String[] command;
 
-	public Command(String[] command) {
+	public UtilCommand(String[] command) {
 		super();
 		this.command = command;
 	}

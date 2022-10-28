@@ -10,8 +10,9 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import netmanagement.entity.Command;
-import netmanagement.entity.Device;
+import netmanagement.database.vo.Device;
+import netmanagement.utils.UtilCommand;
+import netmanagement.utils.UtilDevice;
 
 /**
  * Para ejecutar este programa debes tener instalada la utilidad Nmap en tu máquina Linux
@@ -57,7 +58,7 @@ public class Main {
 	
 	private static boolean getNetwork() {
 		LOG.info("Obteniendo red del servidor...");
-		Command command = new Command(new String[] {"/bin/bash", "-c", "ip addr"});
+		UtilCommand command = new UtilCommand(new String[] {"/bin/bash", "-c", "ip addr"});
 		String response = command.executeCommand();
         Pattern pattern = Pattern.compile("enp\\d+s\\d+\\:(?s).*inet\\s(\\d+\\.\\d+\\.\\d+\\.\\d+\\/\\d+)");
         Matcher matcher = pattern.matcher(response);
@@ -75,47 +76,60 @@ public class Main {
 
 	private static void inventoryDevices() {
 		LOG.info("Descubriendo nuevos dispositivos en la red...");
-		String rootPwd = properties.getProperty("ROOT_PWD");
-		
-		if(rootPwd != null && !rootPwd.isEmpty()) {
-			Command command = new Command(new String[] {"/bin/sh", "-c", "echo "+rootPwd+"| sudo -S nmap -sn "+network});
-			String response = command.executeCommand();
-			LOG.info("Tratando respuesta...");
+		try {
+			UtilDevice utilDevice = new UtilDevice();
+			String rootPwd = properties.getProperty("ROOT_PWD");
 			
-			Pattern rootPwdPattern = Pattern.compile("(incorrect password)");
-			Matcher rootPwdMatcher = rootPwdPattern.matcher(response);
-			if(!rootPwdMatcher.find()) {
-				String[] lines = response.split("\\r?\\n");
+			if(rootPwd != null && !rootPwd.isEmpty()) {
+				UtilCommand command = new UtilCommand(new String[] {"/bin/sh", "-c", "echo "+rootPwd+"| sudo -S nmap -sn "+network});
+				String response = command.executeCommand();
+				LOG.info("Tratando respuesta...");
 				
-				ArrayList<Device> devices = new ArrayList<>();
-				String macAddress = null, ipAddress = null, label = null;
-				
-				for(String line : lines) {
-					Pattern ipPattern = Pattern.compile("((\\d+\\.){3}\\d+)");
-					Matcher ipMatcher = ipPattern.matcher(line);
+				Pattern rootPwdPattern = Pattern.compile("(incorrect password)");
+				Matcher rootPwdMatcher = rootPwdPattern.matcher(response);
+				if(!rootPwdMatcher.find()) {
+					String[] lines = response.split("\\r?\\n");
 					
-					Pattern macPattern = Pattern.compile("((([A-Z]|[0-9]){2}\\:){5}([A-Z]|[0-9]){2})");
-					Matcher macMatcher = macPattern.matcher(line);
+					ArrayList<Device> devices = new ArrayList<>();
+					String macAddress = null, ipAddress = null, label = null;
 					
-					Pattern labelPattern = Pattern.compile("MAC[A-Za-z0-9\\s\\:]+\\(((?s).*)\\)$");
-					Matcher labelMatcher = labelPattern.matcher(line);
-					
-					if(macMatcher.find())
-						macAddress = macMatcher.group(1);
-					if(ipMatcher.find())
-						ipAddress = ipMatcher.group(1);
-					if(labelMatcher.find())
-						label = labelMatcher.group(1);
-					if(label != null && ipAddress != null && macAddress != null) {
-						Device device = new Device(macAddress, ipAddress, label);
-						devices.add(device);
-						macAddress = null;
-						ipAddress = null;
-						label = null;
+					for(String line : lines) {
+						Pattern ipPattern = Pattern.compile("((\\d+\\.){3}\\d+)");
+						Matcher ipMatcher = ipPattern.matcher(line);
+						
+						Pattern macPattern = Pattern.compile("((([A-Z]|[0-9]){2}\\:){5}([A-Z]|[0-9]){2})");
+						Matcher macMatcher = macPattern.matcher(line);
+						
+						Pattern labelPattern = Pattern.compile("MAC[A-Za-z0-9\\s\\:]+\\(((?s).*)\\)$");
+						Matcher labelMatcher = labelPattern.matcher(line);
+						
+						if(macMatcher.find())
+							macAddress = macMatcher.group(1);
+						if(ipMatcher.find())
+							ipAddress = ipMatcher.group(1);
+						if(labelMatcher.find())
+							label = labelMatcher.group(1);
+						if(label != null && ipAddress != null && macAddress != null) {
+							Device device = new Device();
+							device.setIpaddress(ipAddress);
+							device.setPhysicaladdress(macAddress);
+							device.setLabel(label);
+							
+							devices.add(device);
+							
+							macAddress = null;
+							ipAddress = null;
+							label = null;
+						}
 					}
-				}
-				Device.inventoryAll(devices);
-			} else LOG.warning("La contraseña de administrador especificada no es válida");
-		} else LOG.warning("Se debe especificar una contraseña de administrador en src/main/resources/application.properties (ROOT_PWD)");
+					utilDevice.inventoryAll(devices);
+				} else LOG.warning("La contraseña de administrador especificada no es válida");
+			} else LOG.warning("Se debe especificar una contraseña de administrador en src/main/resources/application.properties (ROOT_PWD)");
+		} catch (IOException e) {
+			LOG.warning("Ha ocurrido un error leyendo el archivo de configuracion 'mybatis-config.xml':\t"+e.getMessage()+"\t"+e.getCause());
+			LOG.warning("No se puede continuar sin conexión con la base de datos");
+		} catch (Exception e) {
+			LOG.warning("Ha ocurrido un error:\t"+e.getMessage()+"\t"+e.getCause());
+		}
 	}
 }
