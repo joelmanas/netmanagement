@@ -37,7 +37,13 @@ public class Main {
 				Runnable runnable = new Runnable() {
 					@Override
 					public void run() {
-						inventoryDevices();
+						try {
+							inventoryDevices();
+						} catch (IOException e) {
+							LOG.warning("Ha ocurrido un error leyendo el archivo de configuracion 'mybatis-config.xml':\t"+e.getMessage()+"\t"+e.getCause());
+							e.printStackTrace();
+							LOG.warning("No se puede continuar sin conexión con la base de datos");
+						}
 					}
 				};
 
@@ -74,10 +80,10 @@ public class Main {
         return true;
 	}
 
-	private static void inventoryDevices() {
+	private static void inventoryDevices() throws IOException {
 		LOG.info("Descubriendo nuevos dispositivos en la red...");
+		UtilDevice utilDevice = new UtilDevice();
 		try {
-			UtilDevice utilDevice = new UtilDevice();
 			String rootPwd = properties.getProperty("ROOT_PWD");
 			
 			if(rootPwd != null && !rootPwd.isEmpty()) {
@@ -125,11 +131,11 @@ public class Main {
 					utilDevice.inventoryAll(devices);
 				} else LOG.warning("La contraseña de administrador especificada no es válida");
 			} else LOG.warning("Se debe especificar una contraseña de administrador en src/main/resources/application.properties (ROOT_PWD)");
-		} catch (IOException e) {
-			LOG.warning("Ha ocurrido un error leyendo el archivo de configuracion 'mybatis-config.xml':\t"+e.getMessage()+"\t"+e.getCause());
-			LOG.warning("No se puede continuar sin conexión con la base de datos");
 		} catch (Exception e) {
 			LOG.warning("Ha ocurrido un error:\t"+e.getMessage()+"\t"+e.getCause());
+			e.printStackTrace();
+		} finally {
+			utilDevice.close();
 		}
 	}
 }

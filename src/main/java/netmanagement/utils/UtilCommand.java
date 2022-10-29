@@ -30,14 +30,14 @@ public class UtilCommand {
 			BufferedReader reader = new BufferedReader (new InputStreamReader(stdout));
 			
 			while ((s = reader.readLine()) != null)
-            	response += s+"\n";
-            
+				response += "\n"+s;
+			
             process.waitFor();
             process.destroy();
 		} catch(Exception e) {
 			LOG.warning("ERROR:\t" + e.getMessage() + "\t" + e.getCause());
 		}
-        LOG.info("Comando ejecutado correctamente:\n-----\n"+response+"\n-----");
+        LOG.info("Comando ejecutado correctamente:\n-----"+response+"\n-----");
         return response;
 	}
 }

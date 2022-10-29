@@ -78,7 +78,7 @@
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from netmessaging..device
+    from netmessaging.device
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -89,23 +89,23 @@
   <select id="selectByPrimaryKey" parameterType="map" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from netmessaging..device
+    from netmessaging.device
     where id = #{id,jdbcType=INTEGER}
       and physicalAddress = #{physicaladdress,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="map">
-    delete from netmessaging..device
+    delete from netmessaging.device
     where id = #{id,jdbcType=INTEGER}
       and physicalAddress = #{physicaladdress,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByExample" parameterType="netmanagement.database.vo.DeviceExample">
-    delete from netmessaging..device
+    delete from netmessaging.device
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
   <insert id="insert" parameterType="netmanagement.database.vo.Device">
-    insert into netmessaging..device (id, physicalAddress, ipAddress, 
+    insert into netmessaging.device (id, physicalAddress, ipAddress, 
       label, trust, remove, updatedAt
       )
     values (#{id,jdbcType=INTEGER}, #{physicaladdress,jdbcType=VARCHAR}, #{ipaddress,jdbcType=VARCHAR}, 
@@ -113,7 +113,7 @@
       )
   </insert>
   <insert id="insertSelective" parameterType="netmanagement.database.vo.Device">
-    insert into netmessaging..device
+    insert into netmessaging.device
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -162,13 +162,13 @@
     </trim>
   </insert>
   <select id="countByExample" parameterType="netmanagement.database.vo.DeviceExample" resultType="java.lang.Long">
-    select count(*) from netmessaging..device
+    select count(*) from netmessaging.device
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update netmessaging..device
+    update netmessaging.device
     <set>
       <if test="row.id != null">
         id = #{row.id,jdbcType=INTEGER},
@@ -197,7 +197,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update netmessaging..device
+    update netmessaging.device
     set id = #{row.id,jdbcType=INTEGER},
       physicalAddress = #{row.physicaladdress,jdbcType=VARCHAR},
       ipAddress = #{row.ipaddress,jdbcType=VARCHAR},
@@ -210,7 +210,7 @@
     </if>
   </update>
   <update id="updateByPrimaryKeySelective" parameterType="netmanagement.database.vo.Device">
-    update netmessaging..device
+    update netmessaging.device
     <set>
       <if test="ipaddress != null">
         ipAddress = #{ipaddress,jdbcType=VARCHAR},
@@ -232,7 +232,7 @@
       and physicalAddress = #{physicaladdress,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="netmanagement.database.vo.Device">
-    update netmessaging..device
+    update netmessaging.device
     set ipAddress = #{ipaddress,jdbcType=VARCHAR},
       label = #{label,jdbcType=VARCHAR},
       trust = #{trust,jdbcType=BIT},

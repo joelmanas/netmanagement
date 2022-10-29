@@ -1,8 +1,6 @@
 package netmanagement.utils;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +24,14 @@ public class UtilDevice {
 	 * @param label Nombre
 	 * @throws IOException 
 	 */
-	public UtilDevice() throws IOException, Exception {
+	public UtilDevice() throws IOException {
 		super();
 		this.dbSession = new DbSession().getDbSession();
+	}
+	
+	public void close() {
+		this.dbSession.commit();
+		this.dbSession.close();
 	}
 	
 	/**
@@ -47,8 +50,6 @@ public class UtilDevice {
 		List<Device> Device = mapperDeviceMapper.selectByExample(consulta);
 
 		LOG.info("Fin de consulta del dispositivo con id "+id+" en la base de datos");
-		dbSession.close();
-			
 		return Device;
 	}
 	
@@ -68,18 +69,15 @@ public class UtilDevice {
 		List<Device> Device = mapperDeviceMapper.selectByExample(consulta);
 
 		LOG.info("Fin de consulta del dispositivo con direccion MAC "+physicalAddress+" en la base de datos");
-		dbSession.close();
-		
 		return Device;
 	}
 	
 	public void inventoryAll(ArrayList<Device> devices) {
 		LOG.info("Se han descubierto "+devices.size()+" dispositivos");
 		for(Device device : devices) {
-			LOG.info(device.toString());
 			inventory(device);
+			LOG.info("--");
 		}
-		this.dbSession.close();
 	}
 	
 	private void inventory(Device device) {
@@ -109,7 +107,6 @@ public class UtilDevice {
 		mapperDeviceMapper.updateByPrimaryKey(device);
 		
 		LOG.info("Se ha actualizado el dispositivo con direccion MAC "+device.getPhysicaladdress()+" en la base de datos");
-		dbSession.close();
 	}
 	
 	private void insert(Device device) {
@@ -123,7 +120,6 @@ public class UtilDevice {
 		mapperDeviceMapper.insert(device);
 		
 		LOG.info("Se ha actualizado el dispositivo con direccion MAC "+device.getPhysicaladdress()+" en la base de datos");
-		dbSession.close();
 	}
 	
 	private void remove(Device device) {
